@@ -12,7 +12,7 @@ import (
 
 type UserListResponse struct {
 	Response
-	UserList []User `json:"user_list"`
+	UserList []dal.UserInfo `json:"user_list"`
 }
 
 type ProxyPostFollowAction struct {
@@ -71,7 +71,8 @@ func  RelationAction(c *gin.Context) {
 		if actionType == CANCEL {
 			err = dal.CancelUserFollow(userId, followId)
 			if err != nil {
-				c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Fail to cancel "})
+				fmt.Println(err)
+				c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: err.Error()})
 			} else {
 				c.JSON(http.StatusOK, Response{StatusCode: 0, StatusMsg: "Successful to cancel"})
 			}
@@ -116,9 +117,9 @@ func FollowList(c *gin.Context) {
 	JudgeUserFair(userId,token,c)
 
 
-	var userList []User // 这里的userList 表示 关注列表
-	var userInfo []dal.User
-	var userSet User
+	var userList []dal.UserInfo // 这里的userList 表示 关注列表
+	var userInfo []dal.UserInfo
+	var userSet dal.UserInfo
 
 	userInfo,err = dal.GetFollowListByUserId(userId)
 	if err!= nil{
@@ -134,7 +135,6 @@ func FollowList(c *gin.Context) {
 		userList = append(userList,userSet )
 
 	}
-
 
 
 	c.JSON(http.StatusOK, UserListResponse{
@@ -156,9 +156,9 @@ func FollowerList(c *gin.Context) {
 
 	JudgeUserFair(userId,token,c)
 
-	var userList []User // 这里的userList 表示 粉丝列表
-	var userInfo []dal.User
-	var userSet User
+	var userList []dal.UserInfo // 这里的userList 表示 粉丝列表
+	var userInfo []dal.UserInfo
+	var userSet dal.UserInfo
 
 	userInfo,err = dal.GetFollowerListByUserId(userId)
 	if err!= nil{
@@ -169,8 +169,8 @@ func FollowerList(c *gin.Context) {
 		userSet.Id = userInfo[i].Id
 		userSet.FollowCount = userInfo[i].FollowCount
 		userSet.FollowerCount = userInfo[i].FollowerCount
-		 userSet.IsFollow=userInfo[i].IsFollow
-		 userSet.Name = userInfo[i].Name
+		userSet.IsFollow=userInfo[i].IsFollow
+		userSet.Name = userInfo[i].Name
 		userList = append(userList,userSet )
 
 	}
@@ -186,12 +186,12 @@ func FollowerList(c *gin.Context) {
 
 
 
-// FriendList all users have same friend list
+//FriendList all users have same friend list DemoUser 不行
 func FriendList(c *gin.Context) {
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: []User{DemoUser},
+		UserList: nil,
 	})
 }
