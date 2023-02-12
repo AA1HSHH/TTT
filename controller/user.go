@@ -106,11 +106,9 @@ func UserInfo(c *gin.Context) {
 		})
 		return
 	}
-	//TODO: is_follow need dal.follow interface
-	var isFollow bool
-	if myId == userId {
-		isFollow = true
-	}
+
+	isFollow := dal.IsRelationFollow(userId, myId)
+
 	c.JSON(http.StatusOK, UserResponse{
 		Response: Response{StatusCode: 0, StatusMsg: "success"},
 		User: User{Id: user.Id, Name: user.Name,
