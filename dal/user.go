@@ -54,3 +54,14 @@ func QueryUserbyId(id int64) (*User, error) {
 	}
 	return users[0], nil
 }
+func IsRelationFollow(uid int64, myid int64) bool {
+	if uid == myid {
+		return true
+	}
+	relation := make([]Tfollow, 0)
+	rst := db.Model("t_follow").Where("user_id = ?", uid).Where("fans_id = ?", myid).Find(&relation)
+	if rst.Error != nil || len(relation) == 0 {
+		return false
+	}
+	return true
+}
