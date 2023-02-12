@@ -4,7 +4,11 @@
 sudo docker compose up -d
 sudo docker compose down -v
 ```
-
+## install ffmpeg in ubuntu
+```shell
+sudo apt update
+sudo apt install ffmpeg
+```
 # simple-demo
 ## 抖音项目服务端简单示例
 

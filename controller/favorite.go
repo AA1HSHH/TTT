@@ -19,10 +19,11 @@ func FavoriteAction(c *gin.Context) {
 
 // FavoriteList all users have same favorite video list
 func FavoriteList(c *gin.Context) {
-	c.JSON(http.StatusOK, VideoListResponse{
-		Response: Response{
-			StatusCode: 0,
-		},
-		VideoList: DemoVideos,
-	})
+	//c.JSON(http.StatusOK, VideoListResponse{
+	//	Response: Response{
+	//		StatusCode: 0,
+	//	},
+	//	VideoList: [],
+	//})
+	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Not implement"})
 }
