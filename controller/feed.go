@@ -44,13 +44,15 @@ func Feed(c *gin.Context) {
 	// })
 
 	var feedRefTime time.Time // 根据参考时间返回视频流
+	feedRefTime = time.Now()
+	log.Printf("当前时间: %v", feedRefTime)
 	if inputTime != "0" {
 		intInputTime, _ := strconv.ParseInt(inputTime, 10, 64) // 字符串转十进制整型
-		feedRefTime = time.Unix(intInputTime, 0)               // 自 1970 年 1 月 1 日 UTC 以来经过 intInputTime 秒
-		log.Printf("传入时间: %v", feedRefTime.UTC())              // 以 UTC 显示
-	} else {
-		feedRefTime = time.Now()
-		log.Printf("当前时间: %v", feedRefTime)
+		//
+		if intInputTime < 253402185600 { // 1 6762 0660 3034  抖声初始化时间戳越界
+			feedRefTime = time.Unix(intInputTime, 0) // 自 1970 年 1 月 1 日 UTC 以来经过 intInputTime 秒
+		}
+		log.Printf("传入时间: %v", feedRefTime.UTC()) // 以 UTC 显示
 	}
 	log.Printf("视频流返回时间: %v", feedRefTime)
 
