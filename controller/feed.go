@@ -95,7 +95,6 @@ func Feed(c *gin.Context) {
 		}
 	}
 	log.Printf("下次刷新时间戳: %v", nextTime.Unix())
-	log.Printf("第一个视频 id: %v", feedVideoList[0].Id)
 
 	c.JSON(http.StatusOK, FeedResponse{
 		Response: Response{
