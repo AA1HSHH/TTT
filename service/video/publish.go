@@ -39,7 +39,7 @@ func Publish(title string, userId int64, videoName string, coverName string) err
 		log.Printf("视频信息保存至数据库失败%v", err)
 		return err
 	}
-	log.Printf("视频信息保存至数据库失败成功")
+	log.Printf("视频信息保存至数据库成功")
 
 	return nil
 }
