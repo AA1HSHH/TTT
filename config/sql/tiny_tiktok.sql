@@ -13,38 +13,38 @@ CREATE TABLE `t_follow` (
 );
 
 CREATE TABLE `t_message` (
-                             `id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                             `from` bigint,
-                             `to` bigint,
-                             `content` varchar(255) NOT NULL,
-                             `create_time` datetime NOT NULL
+  `id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `from` bigint,
+  `to` bigint,
+  `content` varchar(255) NOT NULL,
+  `create_time` datetime NOT NULL
 );
 
 CREATE TABLE `t_video` (
-                           `id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                           `author_id` bigint,
-                           `title` varchar(255) NOT NULL,
-                           `publish_time` datetime NOT NULL,
-                           `play_url` varchar(255) NOT NULL,
-                           `cover_url` varchar(255) NOT NULL,
-                           `favorite_count` bigint NOT NULL DEFAULT 0,
-                           `comment_count` bigint NOT NULL DEFAULT 0
+  `id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `author_id` bigint,
+  `title` varchar(255) NOT NULL,
+  `publish_time` datetime NOT NULL,
+  `play_url` varchar(255) NOT NULL,
+  `cover_url` varchar(255) NOT NULL,
+  `favorite_count` bigint NOT NULL DEFAULT 0,
+  `comment_count` bigint NOT NULL DEFAULT 0
 );
 
 CREATE TABLE `t_video_comment` (
-                                   `id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                                   `video_id` bigint,
-                                   `writer_id` bigint,
-                                   `content` varchar(255),
-                                   `create_date` datetime,
-                                   `is_delete` datetime
+  `id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `video_id` bigint,
+  `writer_id` bigint,
+  `content` varchar(255),
+  `create_date` datetime,
+  `is_delete` datetime
 );
 
 CREATE TABLE `t_video_favorite` (
-                                    `id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
-                                    `video_id` bigint,
-                                    `liker_id` bigint,
-                                    `is_delete` datetime
+  `id` bigint PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  `video_id` bigint,
+  `liker_id` bigint,
+  `is_delete` datetime
 );
 
 CREATE INDEX `t_user_index_0` ON `t_user` (`name`);

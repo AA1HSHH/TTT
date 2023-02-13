@@ -16,7 +16,7 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User User `json:"user"`
+	User APIUser `json:"user"`
 }
 
 func Register(c *gin.Context) {
@@ -111,7 +111,7 @@ func UserInfo(c *gin.Context) {
 
 	c.JSON(http.StatusOK, UserResponse{
 		Response: Response{StatusCode: 0, StatusMsg: "success"},
-		User: User{Id: user.Id, Name: user.Name,
+		User: APIUser{Id: user.Id, Name: user.Name,
 			FollowCount: user.FollowCount, FollowerCount: user.FollowerCount, IsFollow: isFollow},
 	})
 

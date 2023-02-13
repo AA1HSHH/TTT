@@ -17,7 +17,7 @@ func TestDB(t *testing.T) {
 	assert.True(t, dal.IsExist("789"))
 	assert.False(t, dal.IsExist("123"))
 
-	id, err := dal.QueryUserbyName("789")
+	id, err := dal.QueryUserIDbyName("789")
 
 	if err != nil {
 		fmt.Println(err)
