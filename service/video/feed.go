@@ -29,7 +29,14 @@ func QueryFeedVideoList(userId int64, timeStamp time.Time) ([]dal.FeedVideo, tim
 	}
 
 	feed_videos, _ := GetFeedVideo(dbVideosList)
-	return feed_videos, dbVideosList[0].PublishTime, nil
+
+	var nextTime time.Time
+	if !(len(feed_videos) > 0) {
+		nextTime = time.Now()
+	} else {
+		nextTime = dbVideosList[0].PublishTime
+	}
+	return feed_videos, nextTime, nil
 }
 
 // 获取 FeedVideo, 合并 DBVideo 和 User 数据
