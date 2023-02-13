@@ -50,6 +50,6 @@ func GetPublishList(user_id int64) ([]dal.FeedVideo, error) {
 	if err != nil {
 		fmt.Println("数据库获取视频流信息失败")
 	}
-	publishVideos, _ := GetFeedVideo(dbVideos)
+	publishVideos, _ := GetFeedVideo(user_id, dbVideos)
 	return publishVideos, nil
 }

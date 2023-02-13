@@ -28,7 +28,7 @@ func QueryFeedVideoList(userId int64, timeStamp time.Time) ([]dal.FeedVideo, tim
 		}
 	}
 
-	feed_videos, _ := GetFeedVideo(dbVideosList)
+	feed_videos, _ := GetFeedVideo(userId, dbVideosList)
 
 	var nextTime time.Time
 	if !(len(feed_videos) > 0) {
@@ -40,19 +40,21 @@ func QueryFeedVideoList(userId int64, timeStamp time.Time) ([]dal.FeedVideo, tim
 }
 
 // 获取 FeedVideo, 合并 DBVideo 和 User 数据
-func GetFeedVideo(dbvideos []dal.DBVideo) ([]dal.FeedVideo, error) {
+func GetFeedVideo(userId int64, dbvideos []dal.DBVideo) ([]dal.FeedVideo, error) {
 	videoCount := len(dbvideos) // config.VideoCount
 	log.Printf("用户发布视频数: %v", videoCount)
 	feed_videos := make([]dal.FeedVideo, videoCount)
 	feed_authors := make([]dal.FeedAuthor, videoCount)
 	for index, dbvideo := range dbvideos {
 		author_id := dbvideo.AuthorId
-		user_info, err := dal.QueryUserbyId(author_id)
+		author_info, err := dal.QueryUserbyId(author_id) // 获取用户信息
+
 		if err == nil {
-			feed_authors[index].Id = user_info.Id
-			feed_authors[index].Name = user_info.Name
-			feed_authors[index].FollowCount = user_info.FollowCount
-			feed_authors[index].FollowerCount = user_info.FollowerCount
+			feed_authors[index].Id = author_info.Id
+			feed_authors[index].Name = author_info.Name
+			feed_authors[index].FollowCount = author_info.FollowCount
+			feed_authors[index].FollowerCount = author_info.FollowerCount
+			feed_authors[index].IsFollow = dal.IsFollow(userId, author_info.Id)
 		}
 
 		feed_videos[index].Id = dbvideo.Id
@@ -62,7 +64,7 @@ func GetFeedVideo(dbvideos []dal.DBVideo) ([]dal.FeedVideo, error) {
 		feed_videos[index].CommentCount = dbvideo.CommentCount
 		feed_videos[index].Title = dbvideo.Title
 		feed_videos[index].Author = feed_authors[index]
-
+		feed_videos[index].IsFavorite = dal.ISFavorite(dbvideo.Id, author_info.Id)
 	}
 	return feed_videos, nil
 }
