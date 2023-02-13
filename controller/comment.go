@@ -71,7 +71,7 @@ func CommentAction(c *gin.Context) {
 				return
 			}
 
-			err = dal.DeleteVideoComment(commentId)
+			err = dal.DeleteVideoComment(commentId, videoId)
 			if err != nil {
 				c.JSON(http.StatusOK, CommentActionResponse{
 					Response: Response{StatusCode: 1,

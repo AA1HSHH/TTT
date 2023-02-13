@@ -19,18 +19,63 @@ func (VideoComment) TableName() string {
 }
 
 func CreateVideoComment(vid int64, uid int64, commenttext string) (*VideoComment, error) {
-	vc := VideoComment{VideoId: vid, WriterId: uid, Content: commenttext, CreateTime: time.Now()}
-	if err := db.Model(&VideoComment{}).Create(&vc).Error; err != nil {
+	//
+	//if err := db.Model(&VideoComment{}).Create(&vc).Error; err != nil {
+	//	return nil, err
+	//}
+	//return &vc, nil
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := tx.Error; err != nil {
 		return nil, err
 	}
-	return &vc, nil
+	vc := VideoComment{VideoId: vid, WriterId: uid, Content: commenttext, CreateTime: time.Now()}
+	if err := tx.Model(&VideoComment{}).Create(&vc).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	if err := tx.Model(&DBVideo{}).
+		Where("id = ?", vid).
+		UpdateColumn("comment_count", gorm.Expr("comment_count + ?", 1)).Error; err != nil {
+		tx.Rollback()
+		return nil, err
+	}
+	return &vc, tx.Commit().Error
+
 }
-func DeleteVideoComment(commentId int64) error {
-	vc := VideoComment{}
-	if err := db.Model(&VideoComment{}).Where("id = ?", commentId).Delete(&vc).Error; err != nil {
+func DeleteVideoComment(commentId, vid int64) error {
+	//
+	//if err := db.Model(&VideoComment{}).Where("id = ?", commentId).Delete(&vc).Error; err != nil {
+	//	return err
+	//}
+	//return nil
+	tx := db.Begin()
+	defer func() {
+		if r := recover(); r != nil {
+			tx.Rollback()
+		}
+	}()
+	if err := tx.Error; err != nil {
 		return err
 	}
-	return nil
+	vc := VideoComment{}
+	if err := db.Model(&VideoComment{}).
+		Where("id = ?", commentId).
+		Delete(&vc).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Model(&DBVideo{}).
+		Where("id = ?", vid).
+		UpdateColumn("comment_count", gorm.Expr("comment_count - ?", 1)).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	return tx.Commit().Error
 }
 func QueryVideoCommentWriterID(commentId int64) (int64, error) {
 	vc := VideoComment{}
