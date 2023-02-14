@@ -6,10 +6,11 @@ import (
 	"testing"
 )
 
+// 0214 passed AA1HSHH
 func TestFavorite(t *testing.T) {
 	e := newExpect(t)
 
-	feedResp := e.GET("/douyin/feed/").Expect().Status(http.StatusOK).JSON().Object()
+	feedResp := e.GET("/douyin/feed/").WithQuery("latest_time", "0").Expect().Status(http.StatusOK).JSON().Object()
 	feedResp.Value("status_code").Number().Equal(0)
 	feedResp.Value("video_list").Array().Length().Gt(0)
 	firstVideo := feedResp.Value("video_list").Array().First().Object()
@@ -41,10 +42,11 @@ func TestFavorite(t *testing.T) {
 	}
 }
 
+// 0214 passed AA1HSHH
 func TestComment(t *testing.T) {
 	e := newExpect(t)
 
-	feedResp := e.GET("/douyin/feed/").Expect().Status(http.StatusOK).JSON().Object()
+	feedResp := e.GET("/douyin/feed/").WithQuery("latest_time", "0").Expect().Status(http.StatusOK).JSON().Object()
 	feedResp.Value("status_code").Number().Equal(0)
 	feedResp.Value("video_list").Array().Length().Gt(0)
 	firstVideo := feedResp.Value("video_list").Array().First().Object()
