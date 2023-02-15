@@ -5,10 +5,14 @@ go 1.19
 require (
 	github.com/gavv/httpexpect/v2 v2.8.0
 	github.com/gin-gonic/gin v1.7.7
+	github.com/go-redis/redis v6.15.9+incompatible
 	github.com/golang-jwt/jwt/v4 v4.4.3
+	github.com/gorilla/websocket v1.4.2
+	github.com/sirupsen/logrus v1.9.0
 	github.com/stretchr/testify v1.7.0
-	gorm.io/driver/mysql v1.4.5
-	gorm.io/gorm v1.24.3
+	gopkg.in/ini.v1 v1.67.0
+	gorm.io/driver/mysql v1.4.6
+	gorm.io/gorm v1.24.5
 )
 
 require (
@@ -23,7 +27,6 @@ require (
 	github.com/go-sql-driver/mysql v1.7.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
 	github.com/imkira/go-interpol v1.1.0 // indirect
 	github.com/jinzhu/inflection v1.0.0 // indirect
 	github.com/jinzhu/now v1.1.5 // indirect
@@ -48,7 +51,7 @@ require (
 	github.com/yudai/golcs v0.0.0-20170316035057-ecda9a501e82 // indirect
 	golang.org/x/crypto v0.0.0-20220427172511-eb4f295cb31f // indirect
 	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
-	golang.org/x/sys v0.0.0-20220503163025-988cb79eb6c6 // indirect
+	golang.org/x/sys v0.0.0-20220715151400-c0bba94af5f8 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.28.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect

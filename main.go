@@ -9,8 +9,8 @@ import (
 )
 
 func main() {
-	go service.RunMessageServer()
-
+	//go service.RunMessageServer()
+	//
 	if err := dal.Init(); err != nil {
 		panic("db init error")
 	}
@@ -18,9 +18,13 @@ func main() {
 		panic("JWT init error")
 	}
 
+	go service.Manager.Start()
 	r := gin.Default()
-
+	r.Use(gin.Recovery(), gin.Logger())
 	initRouter(r)
+	_ = r.Run(dal.HttpPort)
+	//
 
-	r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+	//r.Run() // listen and serve on 0.0.0.0:8080 (for windows "localhost:8080")
+
 }

@@ -34,3 +34,10 @@ func initRouter(r *gin.Engine) {
 	apiRouter.GET("/message/chat/", controller.MessageChat)
 	apiRouter.POST("/message/action/", controller.MessageAction)
 }
+
+//func GetRoute() *gin.Engine {
+//	ro := gin.Default()
+//	ro.Use(mw.Cors)
+//	ro.Any("createws", controller.ConCreateConn)
+//	return ro
+//}
