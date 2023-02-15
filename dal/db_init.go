@@ -6,6 +6,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
+	"strings"
 )
 
 var (
@@ -28,9 +29,10 @@ func Init() error {
 		fmt.Println("配置文件读取错误，请检查文件路径:", err)
 	}
 	LoadServer(file)
+	LoadMysqlData(file)
+	path := strings.Join([]string{DbUser, ":", DbPassWord, "@tcp(", DbHost, ":", DbPort, ")/", DbName, "?charset=utf8&parseTime=true"}, "")
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8&parseTime=True&loc=Local&timeout=%s", DbUser, DbPassWord, DbHost, DbPort, DbName, TimeOut)
-	db, err = gorm.Open(mysql.Open(dsn), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
+	db, err = gorm.Open(mysql.Open(path), &gorm.Config{Logger: logger.Default.LogMode(logger.Info)})
 	if err != nil {
 		panic("fail to connect database ,err = " + err.Error())
 	}
@@ -39,4 +41,12 @@ func Init() error {
 func LoadServer(file *ini.File) {
 	AppMode = file.Section("service").Key("AppMode").String()
 	HttpPort = file.Section("service").Key("HttpPort").String()
+}
+func LoadMysqlData(file *ini.File) {
+	Db = file.Section("mysql").Key("Db").String()
+	DbHost = file.Section("mysql").Key("DbHost").String()
+	DbPort = file.Section("mysql").Key("DbPort").String()
+	DbUser = file.Section("mysql").Key("DbUser").String()
+	DbPassWord = file.Section("mysql").Key("DbPassWord").String()
+	DbName = file.Section("mysql").Key("DbName").String()
 }
