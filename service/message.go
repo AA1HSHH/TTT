@@ -77,7 +77,7 @@ func createId(uid, toUid string) string {
 	return uid + "->" + toUid
 }
 
-func (service SendMsgService) WsHandler(c *gin.Context) {
+func WsHandler(c *gin.Context) {
 	uid := c.Query("uid")     // 自己的id
 	toUid := c.Query("toUid") // 对方的id
 	conn, err := (&websocket.Upgrader{

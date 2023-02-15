@@ -2,8 +2,6 @@ package controller
 
 import (
 	"fmt"
-	"github.com/AA1HSHH/TTT/mw"
-	"github.com/AA1HSHH/TTT/service"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )
@@ -18,47 +16,48 @@ import (
 //}
 
 // MessageAction no practical effect, just check if token is valid
-func MessageAction(c *gin.Context) {
-	var sendMsgService service.SendMsgService
-	token := c.Query("token")
-	//userId, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
-	//toUserId := c.Query("to_user_id")
-	//content := c.Query("content")
-
-	_, _, err := mw.TokenStringGetUser(token)
-	if err != nil {
-		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "Authen failed"},
-		})
-		return
-	}
-
-	if err := c.ShouldBind(&sendMsgService); err == nil {
-		c.JSON(http.StatusOK, Response{
-			StatusCode: 0, StatusMsg: "Message send successfully"})
-	} else {
-		c.JSON(http.StatusOK, Response{
-			StatusCode: 1, StatusMsg: "Message send failed"})
-	}
-
-	//userIdB, _ := strconv.Atoi(toUserId)
-	//chatKey := genChatKey(userId, int64(userIdB))
-	//
-	//atomic.AddInt64(&messageIdSequence, 1)
-	//curMessage := Message{
-	//	Id:         messageIdSequence,
-	//	Content:    content,
-	//	CreateTime: time.Now().Format(time.Kitchen),
-	//}
-	//
-	//if messages, exist := tempChat[chatKey]; exist {
-	//	tempChat[chatKey] = append(messages, curMessage)
-	//} else {
-	//	tempChat[chatKey] = []Message{curMessage}
-	//}
-
-	//c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Not implement"})
-}
+//func MessageAction(c *gin.Context) {
+//	var sendMsgService service.SendMsgService
+//	token := c.Query("token")
+//	//userId, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
+//	//toUserId := c.Query("to_user_id")
+//	//content := c.Query("content")
+//
+//	_, _, err := mw.TokenStringGetUser(token)
+//	if err != nil {
+//		c.JSON(http.StatusOK, UserResponse{
+//			Response: Response{StatusCode: 1, StatusMsg: "Authen failed"},
+//		})
+//		return
+//	}
+//
+//	if err := c.ShouldBind(&sendMsgService); err == nil {
+//		sendMsgService.WsHandler(c)
+//		c.JSON(http.StatusOK, Response{
+//			StatusCode: 0, StatusMsg: "Message send successfully"})
+//	} else {
+//		c.JSON(http.StatusOK, Response{
+//			StatusCode: 1, StatusMsg: "Message send failed"})
+//	}
+//
+//	//userIdB, _ := strconv.Atoi(toUserId)
+//	//chatKey := genChatKey(userId, int64(userIdB))
+//	//
+//	//atomic.AddInt64(&messageIdSequence, 1)
+//	//curMessage := Message{
+//	//	Id:         messageIdSequence,
+//	//	Content:    content,
+//	//	CreateTime: time.Now().Format(time.Kitchen),
+//	//}
+//	//
+//	//if messages, exist := tempChat[chatKey]; exist {
+//	//	tempChat[chatKey] = append(messages, curMessage)
+//	//} else {
+//	//	tempChat[chatKey] = []Message{curMessage}
+//	//}
+//
+//	//c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Not implement"})
+//}
 
 // MessageChat all users have same follow list
 func MessageChat(c *gin.Context) {
