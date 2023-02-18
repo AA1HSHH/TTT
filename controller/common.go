@@ -59,11 +59,17 @@ type APIVideo struct {
 	IsFavorite    bool    `json:"is_favorite,omitempty"`
 }
 type APIUser struct {
-	Id            int64  `json:"id,omitempty"`
-	Name          string `json:"name,omitempty"`
-	FollowCount   int64  `json:"follow_count,omitempty"`
-	FollowerCount int64  `json:"follower_count,omitempty"`
-	IsFollow      bool   `json:"is_follow,omitempty"`
+	Id             int64  `json:"id,omitempty"`
+	Name           string `json:"name,omitempty"`
+	FollowCount    int64  `json:"follow_count,omitempty"`
+	FollowerCount  int64  `json:"follower_count,omitempty"`
+	IsFollow       bool   `json:"is_follow,omitempty"`
+	Avatar         string `json:"avatar"`
+	BackgroundImg  string `json:"background_image"`
+	Signature      string `json:"signature"`
+	TotalFavorited int64  `json:"total_favorited"`
+	WorkCnt        int64  `json:"work_count"`
+	FavoriteCnt    int64  `json:"favorite_count"`
 }
 type APIComment struct {
 	Id         int64   `json:"id,omitempty"`
@@ -79,7 +85,8 @@ func constructFavoriteVideoList(videos []dal.DBVideo, mp map[int64]dal.User, fol
 		user := mp[videos[i].AuthorId]
 		_, ok := followList[videos[i].AuthorId]
 		author := APIUser{Id: user.Id, Name: user.Name, FollowCount: user.FollowCount,
-			FollowerCount: user.FollowerCount, IsFollow: ok}
+			FollowerCount: user.FollowerCount, IsFollow: ok, Avatar: user.Avatar, BackgroundImg: user.BackgroundImg,
+			Signature: user.Signature, TotalFavorited: user.TotalFavorited, WorkCnt: user.WorkCnt, FavoriteCnt: user.FavoriteCnt}
 		apiVideos[i] = APIVideo{Id: video.Id, Author: author, PlayUrl: video.PlayUrl, CoverUrl: video.CoverUrl,
 			FavoriteCount: video.FavoriteCount, IsFavorite: true}
 	}
@@ -93,10 +100,11 @@ func constrctCommentList(comments []dal.VideoComment, mp map[int64]dal.User, fol
 		_, ok := followList[rst.WriterId]
 		comment := APIComment{
 			Id: rst.Id,
-			User: APIUser{Id: user.Id, Name: user.Name,
-				FollowCount: user.FollowCount, FollowerCount: user.FollowerCount, IsFollow: ok},
+			User: APIUser{Id: user.Id, Name: user.Name, FollowCount: user.FollowCount,
+				FollowerCount: user.FollowerCount, IsFollow: ok, Avatar: user.Avatar, BackgroundImg: user.BackgroundImg,
+				Signature: user.Signature, TotalFavorited: user.TotalFavorited, WorkCnt: user.WorkCnt, FavoriteCnt: user.FavoriteCnt},
 			Content:    rst.Content,
-			CreateDate: rst.CreateTime.String(),
+			CreateDate: rst.CreateTime.Format("01-02"),
 		}
 		apiComments[i] = comment
 	}

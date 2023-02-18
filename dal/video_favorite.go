@@ -10,6 +10,7 @@ type VideoFavorite struct {
 	LikerId  int64          `gorm:"column:liker_id"`
 	IsDelete gorm.DeletedAt `gorm:"column:is_delete"`
 }
+type AuthorId int64
 
 func (VideoFavorite) TableName() string {
 	return "t_video_favorite"
@@ -27,6 +28,8 @@ func ISFavorite(videoId, userId int64) bool {
 }
 
 func CreatFavoirte(vid, likeId int64) error {
+	var authorId AuthorId
+	db.Model(&DBVideo{}).Select("author_id").Where("id = ?", vid).Scan(&authorId)
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -47,10 +50,24 @@ func CreatFavoirte(vid, likeId int64) error {
 		tx.Rollback()
 		return err
 	}
+	if err := tx.Model(&User{}).
+		Where("id = ?", likeId).
+		UpdateColumn("favorite_count", gorm.Expr("favorite_count + ?", 1)).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Model(&User{}).
+		Where("id = ?", authorId).
+		UpdateColumn("total_favorited", gorm.Expr("total_favorited + ?", 1)).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
 	return tx.Commit().Error
 }
 
 func DeleteFavoirte(vid, likeId int64) error {
+	var authorId AuthorId
+	db.Model(&DBVideo{}).Select("author_id").Where("id = ?", vid).Scan(&authorId)
 	tx := db.Begin()
 	defer func() {
 		if r := recover(); r != nil {
@@ -73,6 +90,18 @@ func DeleteFavoirte(vid, likeId int64) error {
 		tx.Rollback()
 		return err
 	}
+	if err := tx.Model(&User{}).
+		Where("id = ?", likeId).
+		UpdateColumn("favorite_count", gorm.Expr("favorite_count - ?", 1)).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
+	if err := tx.Model(&User{}).
+		Where("id = ?", authorId).
+		UpdateColumn("total_favorited", gorm.Expr("total_favorited - ?", 1)).Error; err != nil {
+		tx.Rollback()
+		return err
+	}
 	return tx.Commit().Error
 }
 
@@ -88,7 +117,7 @@ func QueryFavoriteList(uid int64) ([]DBVideo, map[int64]User, error) {
 		return nil, nil, rst.Error
 	}
 	// select author_id from t_video
-	type AuthorId int64
+
 	var uids []AuthorId
 	rst.Select("author_id").Scan(&uids)
 	// select * from t_user

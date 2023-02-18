@@ -49,7 +49,7 @@ func CommentAction(c *gin.Context) {
 				User: APIUser{Id: user.Id, Name: user.Name,
 					FollowCount: user.FollowCount, FollowerCount: user.FollowerCount, IsFollow: isFollow},
 				Content:    rst.Content,
-				CreateDate: rst.CreateTime.String(),
+				CreateDate: rst.CreateTime.Format("01-02"),
 			}
 			c.JSON(http.StatusOK, CommentActionResponse{
 				Response: Response{StatusCode: 0,

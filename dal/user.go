@@ -3,11 +3,17 @@ package dal
 import "errors"
 
 type User struct {
-	Id            int64  `gorm:"column:id"`
-	Name          string `gorm:"column:name"`
-	Passwd        string `gorm:"column:passwd"`
-	FollowCount   int64  `gorm:"column:follow_count"`
-	FollowerCount int64  `gorm:"column:follower_count"`
+	Id             int64  `gorm:"column:id"`
+	Name           string `gorm:"column:name"`
+	Passwd         string `gorm:"column:passwd"`
+	FollowCount    int64  `gorm:"column:follow_count"`
+	FollowerCount  int64  `gorm:"column:follower_count"`
+	Avatar         string `gorm:"column:avatar"`
+	BackgroundImg  string `gorm:"column:background_image"`
+	Signature      string `gorm:"column:signature"`
+	TotalFavorited int64  `gorm:"column:total_favorited"`
+	WorkCnt        int64  `gorm:"column:work_count"`
+	FavoriteCnt    int64  `gorm:"column:favorite_count"`
 }
 
 var (
