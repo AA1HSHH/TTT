@@ -30,12 +30,19 @@ type User struct {
 	IsFollow      bool   `json:"is_follow,omitempty"`
 }
 
-type Message struct {
-	Id         int64  `json:"id,omitempty"`
-	Content    string `json:"content,omitempty"`
-	CreateTime string `json:"create_time,omitempty"`
-}
-
+//	type Message struct {
+//		Id         int64  `json:"id,omitempty"`
+//		Content    string `json:"content,omitempty"`
+//		CreateTime string `json:"create_time,omitempty"`
+//	}
+//
+//	type Message struct {
+//		MsgId   int64     `gorm:"column:id"`
+//		Id      int64     `gorm:"column:from"`
+//		ToUid   int64     `gorm:"column:to"`
+//		Content string    `gorm:"column:content"`
+//		Time    time.Time `gorm:"column:create_time"`
+//	}
 type MessageSendEvent struct {
 	UserId     int64  `json:"user_id,omitempty"`
 	ToUserId   int64  `json:"to_user_id,omitempty"`

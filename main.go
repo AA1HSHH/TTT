@@ -4,7 +4,6 @@ import (
 	"github.com/AA1HSHH/TTT/config"
 	"github.com/AA1HSHH/TTT/dal"
 	"github.com/AA1HSHH/TTT/mw"
-	"github.com/AA1HSHH/TTT/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,7 +17,7 @@ func main() {
 		panic("JWT init error")
 	}
 
-	go service.Manager.Start()
+	//go service.Manager.Start()
 	r := gin.Default()
 	r.Use(gin.Recovery(), gin.Logger())
 	initRouter(r)

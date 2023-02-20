@@ -2,7 +2,6 @@ package main
 
 import (
 	"github.com/AA1HSHH/TTT/controller"
-	"github.com/AA1HSHH/TTT/service"
 	"github.com/gin-gonic/gin"
 )
 
@@ -33,8 +32,8 @@ func initRouter(r *gin.Engine) {
 	apiRouter.GET("/relation/follower/list/", controller.FollowerList)
 	apiRouter.GET("/relation/friend/list/", controller.FriendList)
 	apiRouter.GET("/message/chat/", controller.MessageChat)
-	//apiRouter.GET("/message/action/", controller.MessageAction)
-	apiRouter.GET("/message/action", service.WsHandler)
+	apiRouter.POST("/message/action/", controller.MessageAction)
+	//apiRouter.GET("/message/action", service.WsHandler)
 }
 
 //func GetRoute() *gin.Engine {
