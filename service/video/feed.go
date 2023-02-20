@@ -55,6 +55,13 @@ func GetFeedVideo(userId int64, dbvideos []dal.DBVideo) ([]dal.FeedVideo, error)
 			feed_authors[index].FollowCount = author_info.FollowCount
 			feed_authors[index].FollowerCount = author_info.FollowerCount
 			feed_authors[index].IsFollow = dal.IsFollow(userId, author_info.Id)
+			// 下为新增字段
+			feed_authors[index].Avatar = author_info.Avatar
+			feed_authors[index].BackgroundImage = author_info.BackgroundImg
+			feed_authors[index].Signature = author_info.Signature
+			feed_authors[index].TotalFavorited = author_info.TotalFavorited
+			feed_authors[index].WorkCount = author_info.WorkCnt
+			feed_authors[index].FavoriteCount = author_info.FavoriteCnt
 		}
 
 		feed_videos[index].Id = dbvideo.Id
