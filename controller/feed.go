@@ -46,7 +46,7 @@ func Feed(c *gin.Context) {
 	var feedRefTime time.Time // 根据参考时间返回视频流
 	feedRefTime = time.Now()
 	log.Printf("当前时间: %v", feedRefTime)
-	if inputTime != "0" {
+	if inputTime != "0" && inputTime != "" {
 		intInputTime, _ := strconv.ParseInt(inputTime, 10, 64) // 字符串转十进制整型
 		//
 		if intInputTime < 253402185600 { // 1 6762 0660 3034  抖声初始化时间戳越界
@@ -86,7 +86,7 @@ func Feed(c *gin.Context) {
 		}
 		log.Printf("登录用户 id: %v, 登录用户名: %v", id, name)
 
-		feedVideoList, nextTime, err = service.QueryFeedVideoList(0, feedRefTime) // id
+		feedVideoList, nextTime, err = service.QueryFeedVideoList(id, feedRefTime) // id
 
 		if err != nil {
 			c.JSON(http.StatusOK, FeedResponse{

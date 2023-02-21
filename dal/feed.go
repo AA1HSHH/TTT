@@ -15,7 +15,7 @@ type DBVideo struct {
 	CoverUrl      string    `json:"cover_url,omitempty"`
 	FavoriteCount int64     `json:"favorite_count,omitempty"`
 	CommentCount  int64     `json:"comment_count,omitempty"`
-	IsFavorite    bool      `json:"is_favorite,omitempty"`
+	// IsFavorite    bool      `json:"is_favorite,omitempty"`
 }
 
 type FeedAuthor struct {
@@ -24,6 +24,13 @@ type FeedAuthor struct {
 	FollowCount   int64  `json:"follow_count"`
 	FollowerCount int64  `json:"follower_count"`
 	IsFollow      bool   `json:"is_follow,omitempty"`
+	// 下为用户新增字段
+	Avatar          string `json:"avatar,omitempty"`
+	BackgroundImage string `json:"background_image,omitempty"`
+	Signature       string `json:"signature,omitempty"`
+	TotalFavorited  int64  `json:"total_favorited,omitempty"`
+	WorkCount       int64  `json:"work_count,omitempty"`
+	FavoriteCount   int64  `json:"favorite_count,omitempty"`
 }
 
 type FeedVideo struct {
