@@ -65,7 +65,7 @@ func  RelationAction(c *gin.Context) {
 		if actionType == FOLLOW {
 			err = dal.AddUserFollow(userId, followId)
 			if err != nil {
-				c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Fail to follow,Do not repeat follow!"})
+				c.JSON(http.StatusOK, Response{StatusCode: 0, StatusMsg: "Fail to follow,Do not repeat follow!"})
 			} else {
 				c.JSON(http.StatusOK, Response{StatusCode: 0, StatusMsg: "Successful to follow"})
 			}
