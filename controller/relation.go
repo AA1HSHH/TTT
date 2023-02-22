@@ -14,6 +14,10 @@ type UserListResponse struct {
 	Response
 	UserList []dal.UserInfo `json:"user_list"`
 }
+type FriendListResponse struct {
+	Response
+	UserList []dal.FriendUser `json:"user_list"`
+}
 
 type ProxyPostFollowAction struct {
 	*gin.Context
@@ -61,7 +65,7 @@ func  RelationAction(c *gin.Context) {
 		if actionType == FOLLOW {
 			err = dal.AddUserFollow(userId, followId)
 			if err != nil {
-				c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Fail to follow,Do not repeat follow!"})
+				c.JSON(http.StatusOK, Response{StatusCode: 0, StatusMsg: "Fail to follow,Do not repeat follow!"})
 			} else {
 				c.JSON(http.StatusOK, Response{StatusCode: 0, StatusMsg: "Successful to follow"})
 			}
@@ -90,19 +94,20 @@ func JudgeUserFair(userId int64,token string,c *gin.Context){
 	}
 
 	id, username, err := mw.TokenStringGetUser(token)
-	fmt.Println(id)
+	fmt.Println(id,username)
 	if err != nil {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "Authen failed"},
 		})
 		return
 	}
-	if exit := dal.IsExist(username); !exit {
-		c.JSON(http.StatusOK, UserResponse{
-			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
-		})
-		return
-	}
+
+	//if exit := dal.IsExist(username); !exit {
+	//	c.JSON(http.StatusOK, UserResponse{
+	//		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+	//	})
+	//	return
+	//}
 }
 
 // FollowList all users have same follow list
@@ -117,31 +122,33 @@ func FollowList(c *gin.Context) {
 	JudgeUserFair(userId,token,c)
 
 
-	var userList []dal.UserInfo // 这里的userList 表示 关注列表
+	//var userList []dal.UserInfo // 这里的userList 表示 关注列表
 	var userInfo []dal.UserInfo
-	var userSet dal.UserInfo
+	//var userSet dal.UserInfo
 
 	userInfo,err = dal.GetFollowListByUserId(userId)
 	if err!= nil{
+		print("What is err",err)
 		c.JSON(http.StatusOK,  Response{StatusCode: 1, StatusMsg: "?"})
-	}
-
-	for i := 0; i < len(userInfo); i++ {
-		userSet.Id = userInfo[i].Id
-		userSet.FollowCount = userInfo[i].FollowCount
-		userSet.FollowerCount = userInfo[i].FollowerCount
-		userSet.IsFollow = userInfo[i].IsFollow
-		userSet.Name = userInfo[i].Name
-		userList = append(userList,userSet )
 
 	}
+
+	//for i := 0; i < len(userInfo); i++ {
+	//	userSet.Id = userInfo[i].Id
+	//	userSet.FollowCount = userInfo[i].FollowCount
+	//	userSet.FollowerCount = userInfo[i].FollowerCount
+	//	userSet.IsFollow = userInfo[i].IsFollow
+	//	userSet.Name = userInfo[i].Name
+	//	userList = append(userList,userSet )
+	//
+	//}
 
 
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: userList,
+		UserList: userInfo,
 	})
 }
 
@@ -156,30 +163,30 @@ func FollowerList(c *gin.Context) {
 
 	JudgeUserFair(userId,token,c)
 
-	var userList []dal.UserInfo // 这里的userList 表示 粉丝列表
+	//var userList []dal.UserInfo // 这里的userList 表示 粉丝列表
 	var userInfo []dal.UserInfo
-	var userSet dal.UserInfo
+	//var userSet dal.UserInfo
 
 	userInfo,err = dal.GetFollowerListByUserId(userId)
 	if err!= nil{
-		c.JSON(http.StatusOK,  Response{StatusCode: 1, StatusMsg: "?"})
+		fmt.Println(err)
+		//c.JSON(http.StatusOK,  Response{StatusCode: 1, StatusMsg: "?"})
 	}
 
-	for i := 0; i < len(userInfo); i++ {
-		userSet.Id = userInfo[i].Id
-		userSet.FollowCount = userInfo[i].FollowCount
-		userSet.FollowerCount = userInfo[i].FollowerCount
-		userSet.IsFollow=userInfo[i].IsFollow
-		userSet.Name = userInfo[i].Name
-		userList = append(userList,userSet )
-
-	}
-	fmt.Println(userList)
+	//for i := 0; i < len(userInfo); i++ {
+	//	userSet.Id = userInfo[i].Id
+	//	userSet.FollowCount = userInfo[i].FollowCount
+	//	userSet.FollowerCount = userInfo[i].FollowerCount
+	//	userSet.IsFollow=userInfo[i].IsFollow
+	//	userSet.Name = userInfo[i].Name
+	//	userList = append(userList,userSet )
+	//
+	//}
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: userList,
+		UserList: userInfo,
 	})
 }
 
@@ -188,10 +195,28 @@ func FollowerList(c *gin.Context) {
 
 //FriendList all users have same friend list DemoUser 不行
 func FriendList(c *gin.Context) {
-	c.JSON(http.StatusOK, UserListResponse{
+	Id := c.Query("user_id")
+	token := c.Query("token")
+	userId, err := strconv.ParseInt(Id, 10, 64)//转换成数字
+	if err !=nil {fmt.Println(err);return}
+
+	JudgeUserFair(userId,token,c)
+
+	//var userList []dal.UserInfo // 这里的userList 表示 粉丝列表
+	var userInfo []dal.FriendUser
+	//var userSet dal.UserInfo
+
+	userInfo,err = dal.GetChat(userId)
+	if err!= nil{
+		fmt.Println(err)
+		//c.JSON(http.StatusOK,  Response{StatusCode: 1, StatusMsg: "?"})
+	}
+	c.JSON(http.StatusOK, FriendListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: nil,
+		UserList: userInfo,
 	})
+
+
 }
