@@ -32,7 +32,8 @@ func UserIsExist(id int64) bool {
 func CreateMessage(id int64, toUid int64, content string) error {
 	//var cstSh, _ = time.LoadLocation("Asia/Shanghai") //上海
 	//createTime := time.Now().In(cstSh).Format("2006-01-02 15:04:05")
-	createTime := time.Now().Unix()
+	createTime := time.Now().UnixNano() / 1e6
+	print(createTime)
 	message := Message{ToUserId: toUid, FromUserId: id, Content: content, CreateTime: createTime}
 	rst := db.Create(&message)
 	return rst.Error
