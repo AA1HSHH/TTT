@@ -52,10 +52,19 @@ func (DBVideo) TableName() string {
 func QueryVideosByTime(timeStamp time.Time) ([]DBVideo, error) {
 	videoCount := config.VideoCount // 写进配置文件
 	videos := make([]DBVideo, videoCount)
-	result := db.Where("publish_time<?", timeStamp).Order("publish_time desc").Limit(videoCount).Find(&videos)
-	if result.Error != nil {
-		return videos, result.Error
+
+	if !(len(videos) > 0) {
+		result := db.Where("publish_time<?", timeStamp).Order("publish_time desc").Limit(videoCount).Find(&videos)
+		if result.Error != nil {
+			return videos, result.Error
+		}
+	} else {
+		result := db.Where("publish_time<?", time.Now()).Order("publish_time desc").Limit(videoCount).Find(&videos)
+		if result.Error != nil {
+			return videos, result.Error
+		}
 	}
+
 	return videos, nil
 }
 
