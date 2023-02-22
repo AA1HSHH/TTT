@@ -21,7 +21,11 @@ type CommentActionResponse struct {
 // CommentAction no practical effect, just check if token is valid
 func CommentAction(c *gin.Context) {
 	token := c.Query("token")
-	videoId, _ := strconv.ParseInt(c.Query("video_id"), 10, 64)
+	videoId, e := strconv.ParseInt(c.Query("video_id"), 10, 64)
+	if e != nil {
+		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Wrong video_id"})
+		return
+	}
 	actionType := c.Query("action_type")
 	myId, _, err := mw.TokenStringGetUser(token)
 	if err != nil {

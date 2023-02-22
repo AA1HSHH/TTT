@@ -1,6 +1,9 @@
 package dal
 
-import "errors"
+import (
+	"errors"
+	"github.com/AA1HSHH/TTT/mw"
+)
 
 type User struct {
 	Id             int64  `gorm:"column:id"`
@@ -32,7 +35,7 @@ func IsExist(name string) bool {
 	return true
 }
 func CreateUser(name string, passwd string) (int64, error) {
-	user := User{Name: name, Passwd: passwd}
+	user := User{Name: name, Passwd: mw.HashPassword(passwd)}
 	rst := db.Create(&user)
 	return user.Id, rst.Error
 }
@@ -46,8 +49,8 @@ func QueryUserIDbyName(name string) (int64, error) {
 }
 func QueryUserIDbyNamePasswd(name string, passwd string) (int64, error) {
 	users := make([]*User, 0)
-	rst := db.Where("name = ?", name).Where("passwd = ?", passwd).Find(&users)
-	if rst.Error != nil || rst.RowsAffected == 0 {
+	rst := db.Where("name = ?", name).Find(&users)
+	if rst.Error != nil || len(users) == 0 || !mw.CheckPasswordHash(passwd, users[0].Passwd) {
 		return int64(-1), NotFond
 	}
 	return users[0].Id, nil
@@ -55,8 +58,8 @@ func QueryUserIDbyNamePasswd(name string, passwd string) (int64, error) {
 func QueryUserbyId(id int64) (*User, error) {
 	users := make([]*User, 0)
 	rst := db.Where("id = ?", id).Find(&users)
-	if rst.Error != nil || rst.RowsAffected == 0 {
-		return users[0], NotFond
+	if rst.Error != nil || len(users) == 0 {
+		return nil, NotFond
 	}
 	return users[0], nil
 }

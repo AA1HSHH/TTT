@@ -84,7 +84,13 @@ func Login(c *gin.Context) {
 }
 func UserInfo(c *gin.Context) {
 	token := c.Query("token")
-	userId, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	userId, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	if err != nil {
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "No user_id"},
+		})
+		return
+	}
 	myId, myUserName, err := mw.TokenStringGetUser(token)
 	if err != nil {
 		c.JSON(http.StatusOK, UserResponse{
