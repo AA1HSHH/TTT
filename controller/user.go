@@ -5,6 +5,7 @@ import (
 	"github.com/AA1HSHH/TTT/mw"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
 
 type UserLoginResponse struct {
@@ -15,7 +16,7 @@ type UserLoginResponse struct {
 
 type UserResponse struct {
 	Response
-	User User `json:"user"`
+	User APIUser `json:"user"`
 }
 
 func Register(c *gin.Context) {
@@ -60,7 +61,7 @@ func Login(c *gin.Context) {
 		})
 		return
 	}
-	id, err := dal.QueryUserbyNamePasswd(username, password)
+	id, err := dal.QueryUserIDbyNamePasswd(username, password)
 	if err != nil {
 		c.JSON(http.StatusOK, UserLoginResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "Wrong password"},
@@ -81,27 +82,38 @@ func Login(c *gin.Context) {
 		Token:    token,
 	})
 }
-
 func UserInfo(c *gin.Context) {
 	token := c.Query("token")
-	id, username, err := mw.TokenStringGetUser(token)
+	userId, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	myId, myUserName, err := mw.TokenStringGetUser(token)
 	if err != nil {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "Authen failed"},
 		})
 		return
 	}
-	if exit := dal.IsExist(username); !exit {
+	if exit := dal.IsExist(myUserName); !exit {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
 		})
 		return
 	}
-	//TODO: fake user
-	user := User{Id: id, Name: username, FollowCount: 100, FollowerCount: 10}
+
+	user, e := dal.QueryUserbyId(userId)
+	if e != nil {
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "Get user failed"},
+		})
+		return
+	}
+
+	isFollow := dal.IsRelationFollow(userId, myId)
+
 	c.JSON(http.StatusOK, UserResponse{
 		Response: Response{StatusCode: 0, StatusMsg: "success"},
-		User:     user,
+		User: APIUser{Id: user.Id, Name: user.Name, FollowCount: user.FollowCount,
+			FollowerCount: user.FollowerCount, IsFollow: isFollow, Avatar: user.Avatar, BackgroundImg: user.BackgroundImg,
+			Signature: user.Signature, TotalFavorited: user.TotalFavorited, WorkCnt: user.WorkCnt, FavoriteCnt: user.FavoriteCnt},
 	})
 
 }
