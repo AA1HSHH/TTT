@@ -4,27 +4,37 @@ import (
 	"errors"
 	"fmt"
 )
-type UserTemplate struct {
-	Id             int64  `gorm:"column:id"`
-	Name           string `gorm:"column:name"`
-	FollowCount    int64  `gorm:"column:follow_count"`
-	FollowerCount  int64  `gorm:"column:follower_count"`
-	Avatar         string `gorm:"column:avatar"`
-	BackgroundImg  string `gorm:"column:background_image"`
-	Signature      string `gorm:"column:signature"`
-	TotalFavorited int64  `gorm:"column:total_favorited"`
-	WorkCnt        int64  `gorm:"column:work_count"`
-	FavoriteCnt    int64  `gorm:"column:favorite_count"`
-}
+//type UserTemplate struct {
+//	Id             int64  `gorm:"column:id"`
+//	Name           string `gorm:"column:name"`
+//	FollowCount    int64  `gorm:"column:follow_count"`
+//	FollowerCount  int64  `gorm:"column:follower_count"`
+//	Avatar         string `gorm:"column:avatar"`
+//	BackgroundImg  string `gorm:"column:background_image"`
+//	Signature      string `gorm:"column:signature"`
+//	TotalFavorited int64  `gorm:"column:total_favorited"`
+//	WorkCnt        int64  `gorm:"column:work_count"`
+//	FavoriteCnt    int64  `gorm:"column:favorite_count"`
+//}
 type UserInfo struct {
-	UserTemplate
-	IsFollow      bool   `json:"is_follow,omitempty"`
+	Id            int64  `json:"id"`
+	Name          string `json:"name"`
+	FollowCount   int64  `json:"follow_count"`
+	FollowerCount int64  `json:"follower_count"`
+	IsFollow      bool   `json:"is_follow"`
+	// 下为用户新增字段
+	Avatar          string `json:"avatar"`
+	BackgroundImage string `json:"background_image"`
+	Signature       string `json:"signature"`
+	TotalFavorited  int64  `json:"total_favorited"`
+	WorkCount       int64  `json:"work_count"`
+	FavoriteCount   int64  `json:"favorite_count"`
 }
+
 type FriendUser struct {
-	UserTemplate
-	IsFollow      bool   `json:"is_follow,omitempty"`
-	Content string `gorm:"column:content"`//首字母必须要大写，否则接受不了数据
-	MsgType int64 `gorm:"column:MsgType"`
+	UserInfo
+	Content string `gorm:"column:content" json:"message"`//首字母必须要大写，否则接受不了数据
+	MsgType int64 `gorm:"column:MsgType"  json:"msgType"`
 
 }
 
