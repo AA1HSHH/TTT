@@ -53,11 +53,9 @@ func RelationAction(c *gin.Context) {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(token, FId, AType)
 
 	//可以提取示例，下面的由于数据库的问题还没有
 	//checkNum
-	fmt.Println(followId)
 	if exist := dal.IsUserExistById(followId); !exist {
 		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Follow User is not exist"})
 	} else if actionType != FOLLOW && actionType != CANCEL {
@@ -95,14 +93,13 @@ func JudgeUserFair(userId int64, token string, c *gin.Context) {
 	}
 
 	id, username, err := mw.TokenStringGetUser(token)
-	fmt.Println(id, username)
 	if err != nil {
 		c.JSON(http.StatusOK, UserResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "Authen failed"},
 		})
 		return
 	}
-
+	fmt.Println("获取的信息为：id - username : ",id ,username)
 	//if exit := dal.IsExist(username); !exit {
 	//	c.JSON(http.StatusOK, UserResponse{
 	//		Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
@@ -116,7 +113,6 @@ func FollowList(c *gin.Context) {
 
 	Id := c.Query("user_id")
 	token := c.Query("token")
-	fmt.Println(token)
 	userId, err := strconv.ParseInt(Id, 10, 64) //转换成数字
 	if err != nil {
 		fmt.Println(err)
@@ -131,8 +127,8 @@ func FollowList(c *gin.Context) {
 
 	userInfo, err = dal.GetFollowListByUserId(userId)
 	if err != nil {
-		print("What is err", err)
-		c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "?"})
+		print("没有关注关系")
+		//c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "?"})
 
 	}
 
@@ -212,7 +208,7 @@ func FriendList(c *gin.Context) {
 
 	userInfo, err = dal.GetChat(userId)
 	if err != nil {
-		fmt.Println(err)
+		fmt.Println("发生了错误",err)
 		//c.JSON(http.StatusOK,  Response{StatusCode: 1, StatusMsg: "?"})
 	}
 	c.JSON(http.StatusOK, FriendListResponse{
