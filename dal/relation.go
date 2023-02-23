@@ -71,7 +71,7 @@ func AddUserFollow(userId, userToId int64) error {
 	return nil
 }
 
-func CancelUserFollow(userId, userToId int64) error {
+func CancelUserFollow(userId, followId int64) error {
 	//var tfollow []Tfollow
 	//if err := db.Raw("SELECT user_id,fans_id from t_follow where  user_id = ? AND fans_id = ?", userId, userToId).Scan(&tfollow).Error; err != nil {
 	//	return err
@@ -80,7 +80,7 @@ func CancelUserFollow(userId, userToId int64) error {
 	//if len(tfollow)==1 && tfollow[0].user_id ==0 && tfollow[0].fans_id==0{
 	//	return errors.New("There is no relationship, no need to cancel")
 	//}
-	db_eff := db.Exec("DELETE from t_follow  where  user_id = ? AND fans_id = ?", userId, userToId)
+	db_eff := db.Exec("DELETE from t_follow  where  user_id = ? AND fans_id = ?", followId,userId)
 	if db_eff.Error != nil {
 		return db_eff.Error
 	}
@@ -91,7 +91,7 @@ func CancelUserFollow(userId, userToId int64) error {
 	if err := db.Exec("UPDATE t_user SET follow_count=follow_count-1 WHERE id = ?", userId).Error; err != nil {
 		return err
 	}
-	if err := db.Exec("UPDATE t_user SET follower_count=follower_count-1 WHERE id = ?", userToId).Error; err != nil {
+	if err := db.Exec("UPDATE t_user SET follower_count=follower_count-1 WHERE id = ?", followId).Error; err != nil {
 		return err
 	}
 
@@ -143,19 +143,20 @@ func GetChat(userId int64) ([]FriendUser, error) {
 		"from (SELECT f1.fans_id as follower_id FROM t_follow f1 "+
 		"JOIN t_follow f2 ON f1.fans_id = f2.user_id AND f1.user_id = f2.fans_id "+
 		"WHERE f1.user_id = ? ) B "+
-		"join ( SELECT * FROM  t_message t  GROUP BY t.from,t.to ORDER BY create_time desc) MM "+
+		"left join ( SELECT * from (SELECT * FROM  t_message  having 1 ORDER BY create_time desc) t GROUP BY t.from,t.to) MM "+
 		"on B.follower_id =  MM.to or B.follower_id =  MM.from "+
 		"join t_user t "+
 		"on t.id = B.follower_id "+
-		"where MM.from = ? or MM.to = ?  "+
-		"GROUP BY B.follower_id;", userId, userId, userId).Scan(&results).Error; err != nil {
+		"where MM.from = ? or MM.to =? "+
+		"GROUP BY B.follower_id;",  userId,  userId,  userId).Scan(&results).Error; err != nil {
 		fmt.Println("err", err)
 		return results, err
 	} else {
 		fmt.Println(results)
 	}
 	if len(results) == 0 || (results)[0].Id == 0 {
-		return results, errors.New("List is empty")
+		return results, errors.New("List is empty!")
 	}
+	fmt.Println(results)
 	return results, nil
 }
