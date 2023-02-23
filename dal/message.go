@@ -30,8 +30,6 @@ func UserIsExist(id int64) bool {
 	return true
 }
 func CreateMessage(id int64, toUid int64, content string) error {
-	//var cstSh, _ = time.LoadLocation("Asia/Shanghai") //上海
-	//createTime := time.Now().In(cstSh).Format("2006-01-02 15:04:05")
 	createTime := time.Now().UnixNano() / 1e6
 	print(createTime)
 	message := Message{ToUserId: toUid, FromUserId: id, Content: content, CreateTime: createTime}
@@ -50,11 +48,8 @@ func QueryMessage(id int64, toUid int64, preMsgTime int64) ([]Message, error) {
 	var msgList []Message
 	var fromList []Message
 	var toList []Message
-	//parsePreMsgTime := time.Unix(preMsgTime/1000, 0)
-	//fmt.Println(parsePreMsgTime)
 	if preMsgTime == 0 {
 		err := db.Where(&Message{FromUserId: id, ToUserId: toUid}).Find(&toList).Error
-		//err := db.Where(&Message{FromUserId: id, ToUserId: toUid}).Order("create_time").Find(&msgList).Error
 		if err != nil {
 			return msgList, NotFond
 		}
@@ -63,21 +58,19 @@ func QueryMessage(id int64, toUid int64, preMsgTime int64) ([]Message, error) {
 			return msgList, NotFond
 		}
 		msgList = append(fromList, toList...)
-		//fmt.Println(msgList)
 		sort.Sort(Msg(msgList))
 		return msgList, nil
 	} else {
-		err := db.Where(&Message{FromUserId: id, ToUserId: toUid}).Having("create_time > (?)", preMsgTime+500).Find(&toList).Error //fix delay bug: 500ms delay
-		//err := db.Where(&Message{FromUserId: id, ToUserId: toUid}).Order("create_time").Find(&msgList).Error
+		err := db.Where(&Message{FromUserId: id, ToUserId: toUid}).Having("create_time > (?)", preMsgTime+1000).Find(&toList).Error //fix delay bug: 1000ms delay
 		if err != nil {
 			return msgList, NotFond
 		}
-		err = db.Where(&Message{FromUserId: toUid, ToUserId: id}).Having("create_time > (?)", preMsgTime+500).Find(&fromList).Error
+		err = db.Where(&Message{FromUserId: toUid, ToUserId: id}).Having("create_time > (?)", preMsgTime+1000).Find(&fromList).Error
 		if err != nil {
 			return msgList, NotFond
 		}
 		msgList = append(fromList, toList...)
-		//fmt.Println(msgList)
+
 		sort.Sort(Msg(msgList))
 		return msgList, nil
 	}

@@ -10,17 +10,3 @@ const (
 const (
 	VideoCount = 10
 )
-
-//const PlayUrlPrefix = "http://172.17.23.2:8080/static/"
-//const CoverUrlPrefix = "http://172.17.23.2:8080/static/"
-
-// var Info Config
-
-// type Path struct {
-// 	FfmpegPath       string `toml:"ffmpeg_path"`
-// 	StaticSourcePath string `toml:"static_source_path"`
-// }
-
-// type Config struct {
-// 	Path `toml:"path"`
-// }
