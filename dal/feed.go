@@ -74,9 +74,16 @@ func QueryVideosByIdTime(userId int64, timeStamp time.Time) ([]DBVideo, error) {
 	videos := make([]DBVideo, videoCount)
 
 	// 根据用户关注推荐视频流
-	result := db.Where("publish_time<?", timeStamp).Order("publish_time desc").Limit(videoCount).Find(&videos)
-	if result.Error != nil {
-		return videos, result.Error
+	if !(len(videos) > 0) {
+		result := db.Where("publish_time<?", timeStamp).Order("publish_time desc").Limit(videoCount).Find(&videos)
+		if result.Error != nil {
+			return videos, result.Error
+		}
+	} else {
+		result := db.Where("publish_time<?", time.Now()).Order("publish_time desc").Limit(videoCount).Find(&videos)
+		if result.Error != nil {
+			return videos, result.Error
+		}
 	}
 	return videos, nil
 }
