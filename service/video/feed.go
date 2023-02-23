@@ -31,10 +31,10 @@ func QueryFeedVideoList(userId int64, timeStamp time.Time) ([]dal.FeedVideo, tim
 	feed_videos, _ := GetFeedVideo(userId, dbVideosList)
 
 	var nextTime time.Time
-	if !(len(feed_videos) > 0) {
-		nextTime = time.Now()
+	if len(feed_videos) > 0 {
+		nextTime = dbVideosList[len(feed_videos)-1].PublishTime
 	} else {
-		nextTime = dbVideosList[0].PublishTime
+		nextTime = time.Now()
 	}
 	return feed_videos, nextTime, nil
 }

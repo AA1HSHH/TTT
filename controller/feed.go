@@ -48,7 +48,7 @@ func Feed(c *gin.Context) {
 	log.Printf("当前时间: %v", feedRefTime)
 	if inputTime != "0" && inputTime != "" {
 		intInputTime, _ := strconv.ParseInt(inputTime, 10, 64) // 字符串转十进制整型
-		//
+
 		if intInputTime < 253402185600 { // 1 6762 0660 3034  抖声初始化时间戳越界
 			feedRefTime = time.Unix(intInputTime, 0) // 自 1970 年 1 月 1 日 UTC 以来经过 intInputTime 秒
 		}
@@ -96,7 +96,9 @@ func Feed(c *gin.Context) {
 			})
 		}
 	}
-	log.Printf("下次刷新时间戳: %v", nextTime.Unix())
+	log.Printf("下次刷新时间戳: %v", nextTime) //nextTime.Unix()
+
+	log.Printf("Feed 流长度: %v", len(feedVideoList))
 
 	c.JSON(http.StatusOK, FeedResponse{
 		Response: Response{
