@@ -2,67 +2,94 @@ package controller
 
 import (
 	"fmt"
+	"github.com/AA1HSHH/TTT/dal"
+	"github.com/AA1HSHH/TTT/mw"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"strconv"
 )
-
-var tempChat = map[string][]Message{}
-
-var messageIdSequence = int64(1)
 
 type ChatResponse struct {
 	Response
-	MessageList []Message `json:"message_list"`
+	MessageList []dal.Message `json:"message_list"`
 }
 
-// MessageAction no practical effect, just check if token is valid
+// MessageAction send a message less than 60 words to one user,message can not be null
 func MessageAction(c *gin.Context) {
-	//token := c.Query("token")
-	//toUserId := c.Query("to_user_id")
-	//content := c.Query("content")
-	//
-	//if user, exist := usersLoginInfo[token]; exist {
-	//	userIdB, _ := strconv.Atoi(toUserId)
-	//	chatKey := genChatKey(user.Id, int64(userIdB))
-	//
-	//	atomic.AddInt64(&messageIdSequence, 1)
-	//	curMessage := Message{
-	//		Id:         messageIdSequence,
-	//		Content:    content,
-	//		CreateTime: time.Now().Format(time.Kitchen),
-	//	}
-	//
-	//	if messages, exist := tempChat[chatKey]; exist {
-	//		tempChat[chatKey] = append(messages, curMessage)
-	//	} else {
-	//		tempChat[chatKey] = []Message{curMessage}
-	//	}
-	//	c.JSON(http.StatusOK, Response{StatusCode: 0})
-	//} else {
-	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-	//}
-	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Not implement"})
-}
-
-// MessageChat all users have same follow list
-func MessageChat(c *gin.Context) {
-	//token := c.Query("token")
-	//toUserId := c.Query("to_user_id")
-	//
-	//if user, exist := usersLoginInfo[token]; exist {
-	//	userIdB, _ := strconv.Atoi(toUserId)
-	//	chatKey := genChatKey(user.Id, int64(userIdB))
-	//
-	//	c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: tempChat[chatKey]})
-	//} else {
-	//	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "User doesn't exist"})
-	//}
-	c.JSON(http.StatusOK, Response{StatusCode: 1, StatusMsg: "Not implement"})
-}
-
-func genChatKey(userIdA int64, userIdB int64) string {
-	if userIdA > userIdB {
-		return fmt.Sprintf("%d_%d", userIdB, userIdA)
+	token := c.Query("token")
+	userId, _, err := mw.TokenStringGetUser(token)
+	if err != nil {
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "Authen failed"},
+		})
+		return
 	}
-	return fmt.Sprintf("%d_%d", userIdA, userIdB)
+	toUserId, _ := strconv.ParseInt(c.Query("to_user_id"), 10, 64)
+	content := c.Query("content")
+	if len(content) == 0 {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 1,
+				StatusMsg: "Message can't be null"},
+		})
+		return
+	}
+	if exit := dal.UserIsExist(userId); !exit {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "User doesn't exist"},
+		})
+		return
+	}
+	if exit := dal.UserIsExist(toUserId); !exit {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 1,
+				StatusMsg: "User sent message to doesn't exist"},
+		})
+		return
+	}
+
+	if err := dal.CreateMessage(userId, toUserId, content); err == nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 0, StatusMsg: "Message send successfully"})
+	} else {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 1, StatusMsg: "Message send failed"})
+	}
+}
+
+// MessageChat all users have same follow list,get all messages with one user
+func MessageChat(c *gin.Context) {
+	token := c.Query("token")
+	toUserId, _ := strconv.ParseInt(c.Query("to_user_id"), 10, 64)
+	preMsgTime, _ := strconv.ParseInt(c.Query("pre_msg_time"), 10, 64)
+
+	if exit := dal.UserIsExist(toUserId); !exit {
+		c.JSON(http.StatusOK, UserLoginResponse{
+			Response: Response{StatusCode: 1,
+				StatusMsg: "User sent message to doesn't exist"},
+		})
+		return
+	}
+	myid, _, err := mw.TokenStringGetUser(token)
+	if err != nil {
+		c.JSON(http.StatusOK, UserResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "Authen failed"},
+		})
+		return
+	}
+	if msgList, err := dal.QueryMessage(myid, toUserId, preMsgTime); err == nil {
+		c.JSON(http.StatusOK, ChatResponse{
+			Response: Response{
+				StatusCode: 0,
+				StatusMsg:  "Query message list successfully"},
+			MessageList: msgList,
+		})
+		fmt.Println(msgList)
+	} else {
+		c.JSON(http.StatusOK, ChatResponse{
+			Response: Response{
+				StatusCode: 1,
+				StatusMsg:  "Query message list failed"},
+			MessageList: msgList,
+		})
+	}
 }

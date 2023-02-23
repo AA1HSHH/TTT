@@ -4,12 +4,10 @@ import (
 	"github.com/AA1HSHH/TTT/config"
 	"github.com/AA1HSHH/TTT/dal"
 	"github.com/AA1HSHH/TTT/mw"
-	"github.com/AA1HSHH/TTT/service"
 	"github.com/gin-gonic/gin"
 )
 
 func main() {
-	go service.RunMessageServer()
 
 	if err := dal.Init(); err != nil {
 		panic("db init error")

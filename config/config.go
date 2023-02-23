@@ -6,11 +6,9 @@ const (
 	JwtPublicKey    = "config/jwtkey/sample_key.pub"
 	DBDebug         = true
 )
-
 const (
 	VideoCount = 10
 )
-
 const PlayUrlPrefix = "http://172.17.23.2:8080/static/"
 const CoverUrlPrefix = "http://172.17.23.2:8080/static/"
 
