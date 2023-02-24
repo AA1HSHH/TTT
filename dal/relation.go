@@ -148,8 +148,7 @@ func GetChat(userId int64) ([]FriendUser, error) {
 		"on B.follower_id =  MM.to or B.follower_id =  MM.from "+
 		"join t_user t "+
 		"on t.id = B.follower_id "+
-		"where MM.from = ? or MM.to =? "+
-		"GROUP BY B.follower_id;",  userId,  userId,  userId).Scan(&results).Error; err != nil {
+		"GROUP BY B.follower_id;",  userId).Scan(&results).Error; err != nil {
 		fmt.Println("err", err)
 		return results, err
 	} else {
