@@ -205,6 +205,11 @@ func FollowerList(c *gin.Context) {
 	//	userList = append(userList,userSet )
 	//
 	//}
+	//if len(userInfo)>=2 {
+	//	fmt.Println("扣扣扣扣")
+	//
+	//	userInfo[2].IsFollow = false }
+
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
