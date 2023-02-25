@@ -4,7 +4,7 @@ CREATE TABLE `t_user` (
   `passwd` varchar(60) NOT NULL,
   `follow_count` bigint NOT NULL DEFAULT 0,
   `follower_count` bigint NOT NULL DEFAULT 0,
-  `avatar` varchar(255) DEFAULT 'https://cdn-icons-png.flaticon.com/512/149/149071.png',
+  `avatar` varchar(255) NOT NULL  DEFAULT '',
   `background_image` varchar(255) NOT NULL DEFAULT '',
   `signature` varchar(255) NOT NULL DEFAULT '',
   `total_favorited` bigint NOT NULL DEFAULT 0,
@@ -89,3 +89,6 @@ INSERT INTO `t_video`(`id`,`author_id`,`title`,`publish_time`,`play_url`,`cover_
 INSERT INTO `t_video`(`id`,`author_id`,`title`,`publish_time`,`play_url`,`cover_url`) VALUES (2,1,'DOU1 beach','2023-02-11 11:12:17','https://prod-streaming-video-msn-com.akamaized.net/559310a7-dbb0-461c-a863-5cb758607af5/f0474526-90d0-4d3d-aaae-dd68f3f38b28.mp4','https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAOEcdS.img');
 INSERT INTO `t_video`(`id`,`author_id`,`title`,`publish_time`,`play_url`,`cover_url`) VALUES (3,3,'DOU3 mountain','2023-02-11 10:09:17','https://prod-streaming-video-msn-com.akamaized.net/0b927d99-e38a-4f51-8d1a-598fd4d6ee97/3493c85c-f35a-488f-9a8f-633e747fb141.mp4','https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAOEhRG.img');
 INSERT INTO `t_video`(`id`,`author_id`,`title`,`publish_time`,`play_url`,`cover_url`) VALUES (4,5,'DOU5 farmland','2023-02-11 10:12:17','https://prod-streaming-video-msn-com.akamaized.net/e6f8c1b2-b1ac-4343-a8bf-bd79a4d25380/9de24622-e13e-4741-95a6-04fdc39eb2b0.mp4','https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAOEhXX.img');
+
+INSERT INTO `t_follow`(`user_id`, `fans_id`) VALUES (1,2)
+INSERT INTO `t_follow`(`user_id`, `fans_id`) VALUES (1,2)

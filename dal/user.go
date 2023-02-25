@@ -35,7 +35,7 @@ func IsExist(name string) bool {
 	return true
 }
 func CreateUser(name string, passwd string) (int64, error) {
-	user := User{Name: name, Passwd: mw.HashPassword(passwd)}
+	user := User{Name: name, Passwd: mw.HashPassword(passwd), Avatar: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAOEcdN.img", Signature: name}
 	rst := db.Create(&user)
 	return user.Id, rst.Error
 }
