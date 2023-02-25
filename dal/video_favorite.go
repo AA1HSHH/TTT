@@ -1,6 +1,7 @@
 package dal
 
 import (
+	"errors"
 	"gorm.io/gorm"
 )
 
@@ -11,6 +12,9 @@ type VideoFavorite struct {
 	IsDelete gorm.DeletedAt `gorm:"column:is_delete"`
 }
 type AuthorId int64
+
+var FavoriteExist = errors.New("favorite exist")
+var NoFavorite = errors.New("no favorite")
 
 func (VideoFavorite) TableName() string {
 	return "t_video_favorite"
@@ -40,6 +44,15 @@ func CreatFavoirte(vid, likeId int64) error {
 		return err
 	}
 	vf := VideoFavorite{VideoId: vid, LikerId: likeId}
+	exist := make([]VideoFavorite, 0)
+	// already favorite
+	if err := tx.Model(&VideoFavorite{}).
+		Where("video_id = ?", vid).
+		Where("liker_id = ?", likeId).
+		Where("is_delete IS NULL").Find(&exist).Error; err != nil || len(exist) != 0 {
+		tx.Rollback()
+		return FavoriteExist
+	}
 	if err := tx.Model(&VideoFavorite{}).Create(&vf).Error; err != nil {
 		tx.Rollback()
 		return err
@@ -77,12 +90,15 @@ func DeleteFavoirte(vid, likeId int64) error {
 	if err := tx.Error; err != nil {
 		return err
 	}
+	// no favorite check
 	vf := VideoFavorite{}
-	if err := tx.Model(&VideoFavorite{}).
+	if rst := tx.Model(&VideoFavorite{}).
 		Where("video_id = ?", vid).
-		Where("liker_id = ?", likeId).Delete(&vf).Error; err != nil {
+		Where("liker_id = ?", likeId).
+		Where("is_delete IS NULL").
+		Delete(&vf); rst.Error != nil || rst.RowsAffected == 0 {
 		tx.Rollback()
-		return err
+		return NoFavorite
 	}
 	if err := tx.Model(&DBVideo{}).
 		Where("id = ?", vid).
