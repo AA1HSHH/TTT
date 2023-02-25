@@ -71,6 +71,7 @@ func FavoriteList(c *gin.Context) {
 	c.JSON(http.StatusOK, FavoriteListResponse{
 		Response: Response{
 			StatusCode: 0,
+			StatusMsg:  "success",
 		},
 		VideoList: videosList,
 	})

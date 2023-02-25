@@ -10,7 +10,7 @@ import (
 
 type CommentListResponse struct {
 	Response
-	CommentList []APIComment `json:"comment_list,omitempty"`
+	CommentList []APIComment `json:"comment_list"`
 }
 
 type CommentActionResponse struct {
@@ -109,7 +109,7 @@ func CommentList(c *gin.Context) {
 	followList := dal.QueryUserFollowList(userId)
 	comments := constrctCommentList(videoCommentList, writermap, followList)
 	c.JSON(http.StatusOK, CommentListResponse{
-		Response:    Response{StatusCode: 0},
+		Response:    Response{StatusCode: 0, StatusMsg: "Query success"},
 		CommentList: comments,
 	})
 }
