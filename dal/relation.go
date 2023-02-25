@@ -140,7 +140,7 @@ func GetChat(userId int64) ([]FriendUser, error) {
 	var results []FriendUser
 
 	fmt.Println("userId:", userId)
-	if err = db.Raw("SELECT t.*,  MM.content,IF (MM.from= follower_id,FALSE,TRUE) as MsgType " +
+	if err = db.Raw("SELECT t.*,  MM.content,1 as is_follow ,IF (MM.from= follower_id,FALSE,TRUE) as MsgType " +
 		"from (SELECT f1.fans_id as follower_id " +
 				"FROM t_follow f1 JOIN t_follow f2 " +
 				"ON f1.fans_id = f2.user_id AND f1.user_id = f2.fans_id  WHERE f1.user_id = ?) B " +
