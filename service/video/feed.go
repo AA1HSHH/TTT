@@ -71,7 +71,11 @@ func GetFeedVideo(userId int64, dbvideos []dal.DBVideo) ([]dal.FeedVideo, error)
 		feed_videos[index].CommentCount = dbvideo.CommentCount
 		feed_videos[index].Title = dbvideo.Title
 		feed_videos[index].Author = feed_authors[index]
-		feed_videos[index].IsFavorite = dal.ISFavorite(dbvideo.Id, author_info.Id)
+		if userId == 0 {
+			feed_videos[index].IsFavorite = false
+		} else {
+			feed_videos[index].IsFavorite = dal.ISFavorite(dbvideo.Id, userId)
+		}
 	}
 	return feed_videos, nil
 }
