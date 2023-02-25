@@ -10,6 +10,9 @@ func (UserFollow) TableName() string {
 }
 
 func IsFollow(fansId int64, userId int64) bool {
+	if fansId == userId {
+		return true
+	}
 	fans := make([]UserFollow, 0)
 	rst := db.Where(&UserFollow{UserId: userId, FansId: fansId}).Find(&fans)
 	if rst.Error != nil || len(fans) == 0 {
