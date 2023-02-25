@@ -80,7 +80,7 @@ func CancelUserFollow(userId, followId int64) error {
 	//if len(tfollow)==1 && tfollow[0].user_id ==0 && tfollow[0].fans_id==0{
 	//	return errors.New("There is no relationship, no need to cancel")
 	//}
-	db_eff := db.Exec("DELETE from t_follow  where  user_id = ? AND fans_id = ?", followId,userId)
+	db_eff := db.Exec("DELETE from t_follow  where  user_id = ? AND fans_id = ?", followId, userId)
 	if db_eff.Error != nil {
 		return db_eff.Error
 	}
@@ -123,7 +123,7 @@ func GetFollowerListByUserId(userId int64) ([]UserInfo, error) {
 	fmt.Println("userId:", userId)
 	//if err = db.Raw("SELECT u.*,IF(r.BID is null ,FALSE ,TRUE)as is_follow From t_user as  u,(select A.AID as AID ,B.BID as BID from  (select fans_id as AID from t_follow  where user_id = ?) as A left join  (select a.user_id as BID from t_follow as a inner join t_follow as b on a.fans_id = ? and b.fans_id = ?) as B on A.AID = B.BID ) as r where  r.AID = u.id",userId,userId,userId).Scan(&results).Error; err != nil {
 	//if err = db.Raw("SELECT u.*,1 as is_follow FROM t_follow r, t_user u WHERE r.user_id = ? AND r.fans_id = u.id", userId).Scan(&results).Error; err != nil {
-	if err = db.Raw("SELECT U.*,B.is_follow as is_follow FROM (SELECT f1.fans_id as follower_id ,IF(f2.fans_id is null ,FALSE,TRUE) as is_follow  FROM t_follow f1 left JOIN t_follow f2 ON f1.fans_id = f2.user_id AND f1.user_id = f2.fans_id WHERE f1.user_id = ? ) B join t_user U on B.follower_id = U.id",userId).Scan(&results).Error; err != nil {
+	if err = db.Raw("SELECT U.*,B.is_follow as is_follow FROM (SELECT f1.fans_id as follower_id ,IF(f2.fans_id is null ,FALSE,TRUE) as is_follow  FROM t_follow f1 left JOIN t_follow f2 ON f1.fans_id = f2.user_id AND f1.user_id = f2.fans_id WHERE f1.user_id = ? ) B join t_user U on B.follower_id = U.id", userId).Scan(&results).Error; err != nil {
 		fmt.Println("err", err)
 		return results, err
 	} else {
@@ -140,18 +140,18 @@ func GetChat(userId int64) ([]FriendUser, error) {
 	var results []FriendUser
 
 	fmt.Println("userId:", userId)
-	if err = db.Raw("SELECT t.*,  MM.content,IF (MM.from= follower_id,FALSE,TRUE) as MsgType " +
-		"from (SELECT f1.fans_id as follower_id " +
-				"FROM t_follow f1 JOIN t_follow f2 " +
-				"ON f1.fans_id = f2.user_id AND f1.user_id = f2.fans_id  WHERE f1.user_id = ?) B " +
-		"left  join ( SELECT * from (SELECT IF(t.from >t.to ,t.from,t.to ) as bigone ,IF(t.from >t.to ,t.to,t.from ) as smallone ,IF(t.from >t.to ,t.to,t.from ) as is_send ,t.* " +
-				"FROM  t_message t " +
-				"where t.from = ? or t.to =? " +
-				"having 1 ORDER BY create_time desc) t " +
-				"GROUP BY t.bigone,t.smallone ) MM " +
-		"on B.follower_id =  MM.bigone or B.follower_id =  MM.smallone " +
-		"join t_user t " +
-		"on t.id = B.follower_id " +
+	if err = db.Raw("SELECT t.*,  MM.content,IF (MM.from= follower_id,FALSE,TRUE) as MsgType "+
+		"from (SELECT f1.fans_id as follower_id "+
+		"FROM t_follow f1 JOIN t_follow f2 "+
+		"ON f1.fans_id = f2.user_id AND f1.user_id = f2.fans_id  WHERE f1.user_id = ?) B "+
+		"left  join ( SELECT * from (SELECT IF(t.from >t.to ,t.from,t.to ) as bigone ,IF(t.from >t.to ,t.to,t.from ) as smallone ,IF(t.from >t.to ,t.to,t.from ) as is_send ,t.* "+
+		"FROM  t_message t "+
+		"where t.from = ? or t.to =? "+
+		"having 1 ORDER BY create_time desc) t "+
+		"GROUP BY t.bigone,t.smallone ) MM "+
+		"on B.follower_id =  MM.bigone or B.follower_id =  MM.smallone "+
+		"join t_user t "+
+		"on t.id = B.follower_id "+
 		"GROUP BY B.follower_id;", userId, userId, userId).Scan(&results).Error; err != nil {
 		fmt.Println("err", err)
 		return results, err
