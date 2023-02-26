@@ -9,8 +9,8 @@ const (
 const (
 	VideoCount = 10
 )
-const PlayUrlPrefix = "http://192.168.186.128:8080/static/"
-const CoverUrlPrefix = "http://192.168.186.128:8080/static/"
+const PlayUrlPrefix = "http://192.168.43.136:8080/static/"
+const CoverUrlPrefix = "http://192.168.43.136:8080/static/"
 
 // var Info Config
 

@@ -61,11 +61,11 @@ func QueryMessage(id int64, toUid int64, preMsgTime int64) ([]Message, error) {
 		sort.Sort(Msg(msgList))
 		return msgList, nil
 	} else {
-		err := db.Where(&Message{FromUserId: id, ToUserId: toUid}).Having("create_time > (?)", preMsgTime+1000).Find(&toList).Error //fix delay bug: 1000ms delay
+		err := db.Where(&Message{FromUserId: id, ToUserId: toUid}).Having("create_time > (?)", preMsgTime+3000).Find(&toList).Error //fix delay bug: 1000ms delay
 		if err != nil {
 			return msgList, NotFond
 		}
-		err = db.Where(&Message{FromUserId: toUid, ToUserId: id}).Having("create_time > (?)", preMsgTime+1000).Find(&fromList).Error
+		err = db.Where(&Message{FromUserId: toUid, ToUserId: id}).Having("create_time > (?)", preMsgTime+3000).Find(&fromList).Error
 		if err != nil {
 			return msgList, NotFond
 		}
