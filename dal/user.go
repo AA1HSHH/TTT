@@ -20,7 +20,8 @@ type User struct {
 }
 
 var (
-	NotFond = errors.New("User Not Fond")
+	NotFond    = errors.New("User Not Fond")
+	InputEmpty = errors.New("Input empty")
 )
 
 func (User) TableName() string {
@@ -35,6 +36,9 @@ func IsExist(name string) bool {
 	return true
 }
 func CreateUser(name string, passwd string) (int64, error) {
+	if name == "" || passwd == "" {
+		return -1, InputEmpty
+	}
 	user := User{Name: name, Passwd: mw.HashPassword(passwd), Avatar: "https://img-s-msn-com.akamaized.net/tenant/amp/entityid/AAOEcdN.img", Signature: name}
 	rst := db.Create(&user)
 	return user.Id, rst.Error
