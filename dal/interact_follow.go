@@ -10,6 +10,9 @@ func (UserFollow) TableName() string {
 }
 
 func IsFollow(fansId int64, userId int64) bool {
+	if fansId == 0 || userId == 0 {
+		return false
+	}
 	if fansId == userId {
 		return true
 	}
