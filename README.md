@@ -20,4 +20,7 @@ go build && ./TTT
 
 * 视频上传后会保存到本地 public 目录中，访问时用 ip:8080/static/video_name 即可
 
+## doc
+https://za0i9tolqu.feishu.cn/docx/CvsWdhOEfooBa0xxsEocJk4Zni9
+
 
